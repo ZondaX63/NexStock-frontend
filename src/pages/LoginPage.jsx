@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import { Login as LoginIcon } from '@mui/icons-material';
 
 export default function LoginPage() {
@@ -21,7 +21,7 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      const res = await axios.post('/api/auth/login', { email, password });
+      const res = await api.post('/auth/login', { email, password });
       localStorage.setItem('token', res.data.token);
       navigate('/panel');
       window.location.reload();
