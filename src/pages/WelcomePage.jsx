@@ -56,9 +56,9 @@ export default function WelcomePage() {
               onClick={() => navigate('/login')}
               className="group relative px-8 py-4 bg-white text-purple-600 rounded-xl font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 min-w-[200px]"
             >
-              <span className="relative z-10">Giriş Yap</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <span className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold">
+              <span className="relative z-10 transition-opacity duration-300 group-hover:opacity-0">Giriş Yap</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+              <span className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold pointer-events-none">
                 Giriş Yap →
               </span>
             </button>

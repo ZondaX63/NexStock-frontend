@@ -17,18 +17,29 @@ export const AppProvider = ({ children }) => {
 
   const fetchUser = useCallback(async () => {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
       const response = await api.get('/auth/me');
       setUser(response.data);
     } catch (error) {
+      // Suppress noisy logs for unauthorized (no token / expired)
+      if (error.response?.status === 401) return;
       console.error('Failed to fetch user:', error);
     }
   }, []);
 
   const fetchNotifications = useCallback(async () => {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
       const response = await api.get('/notifications');
       setNotifications(response.data);
     } catch (error) {
+      // If unauthorized, stop noisy logging and clear notifications
+      if (error.response?.status === 401) {
+        setNotifications([]);
+        return;
+      }
       console.error('Failed to fetch notifications:', error);
     }
   }, []);
@@ -48,9 +59,24 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    fetchUser();
-    fetchNotifications();
-    const interval = setInterval(fetchNotifications, 30000);
+    // Initial fetch only if token present
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchUser();
+      fetchNotifications();
+    }
+
+    // Poller: check token on each tick and fetch notifications only when authorized
+    const interval = setInterval(() => {
+      const t = localStorage.getItem('token');
+      if (t) {
+        fetchNotifications();
+      } else {
+        // ensure UI doesn't show stale notifications when logged out
+        setNotifications([]);
+      }
+    }, 30000);
+
     return () => clearInterval(interval);
   }, [fetchUser, fetchNotifications]);
 
