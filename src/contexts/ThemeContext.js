@@ -3,14 +3,12 @@ import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import theme from '../theme/theme';
 
 export const ThemeContext = createContext({
-  toggleTheme: () => {},
+  toggleTheme: () => { },
 });
 
 export const AppThemeProvider = ({ children }) => {
-  // Eski haliyle sadece light theme
-  const [themeMode] = useState('light');
   const themeValue = useMemo(() => ({
-    toggleTheme: () => {},
+    toggleTheme: () => { },
   }), []);
   return (
     <ThemeContext.Provider value={themeValue}>

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { AccountBalance } from '@mui/icons-material';
 import AccountSearchBar from '../components/accounts/AccountSearchBar';
 import AccountGroup from '../components/accounts/AccountGroup';
@@ -46,7 +46,6 @@ const AccountPage = () => {
     const [undoAccount, setUndoAccount] = useState(null);
 
     // Filtered accounts - combine all for search/filter
-    const allAccounts = [...companyAccounts, ...customers, ...suppliers];
 
     // We need to map customers/suppliers back to account-like structure for the list if needed, 
     // but the original page treated them as accounts. 

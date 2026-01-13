@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Close, AccountBalanceWallet, AttachMoney } from '@mui/icons-material';
+import { Close, AccountBalanceWallet } from '@mui/icons-material';
 import api from '../api';
 
 const PaymentModal = ({ isOpen, onClose, onConfirm, type, invoice, maxAmount }) => {

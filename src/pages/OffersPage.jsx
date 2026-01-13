@@ -16,7 +16,6 @@ import InvoiceFormModal from '../components/InvoiceFormModal';
 import { useNavigate } from 'react-router-dom';
 
 const OffersPage = () => {
-    const navigate = useNavigate();
     const [offers, setOffers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');

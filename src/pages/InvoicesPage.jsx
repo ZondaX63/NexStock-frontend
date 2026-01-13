@@ -11,8 +11,7 @@ import {
     Schedule,
     Error,
     Visibility,
-    AutoAwesome as SparklesIcon,
-    AddPhotoAlternate
+    AutoAwesome as SparklesIcon
 } from '@mui/icons-material';
 import api from '../api';
 import InvoiceFormModal from '../components/InvoiceFormModal';
@@ -190,8 +189,8 @@ const InvoicesPage = () => {
                 </div>
                 <div className="flex gap-3">
                     <label className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer shadow-sm ${isScanning
-                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                            : 'bg-white border border-indigo-200 text-indigo-600 hover:bg-indigo-50 active:scale-95'
+                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                        : 'bg-white border border-indigo-200 text-indigo-600 hover:bg-indigo-50 active:scale-95'
                         }`}>
                         <input
                             type="file"
