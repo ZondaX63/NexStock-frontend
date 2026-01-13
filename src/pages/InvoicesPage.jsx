@@ -195,7 +195,7 @@ const InvoicesPage = () => {
                         <input
                             type="file"
                             className="hidden"
-                            accept="image/*"
+                            accept="image/*,application/pdf"
                             onChange={handleScanReceipt}
                             disabled={isScanning}
                         />
