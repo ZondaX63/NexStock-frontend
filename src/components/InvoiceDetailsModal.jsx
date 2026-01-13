@@ -9,12 +9,16 @@ import {
     Description,
     Person,
     CalendarToday,
-    AttachMoney
+    AttachMoney,
+    Email as EmailIcon,
+    AutoAwesome as SparklesIcon
 } from '@mui/icons-material';
+import api from '../api';
 import PaymentModal from './PaymentModal';
 
 const InvoiceDetailsModal = ({ isOpen, onClose, invoice, onApprove, onPayment, onEdit, onDelete }) => {
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+    const [emailModal, setEmailModal] = useState({ open: false, content: '', loading: false });
 
     if (!isOpen || !invoice) return null;
 
@@ -30,6 +34,23 @@ const InvoiceDetailsModal = ({ isOpen, onClose, invoice, onApprove, onPayment, o
     const handlePaymentConfirm = (accountId, amount) => {
         onPayment(invoice._id, accountId, amount, isSale ? 'collect' : 'pay');
         setIsPaymentModalOpen(false);
+    };
+
+    const handleGenerateEmail = async () => {
+        setEmailModal({ open: true, content: '', loading: true });
+        try {
+            const res = await api.post('/ai/generate-email', {
+                type: invoice.status === 'draft' ? 'offer' : 'invoice',
+                partnerName: invoice.customer?.name || invoice.supplier?.name || 'Sayın Yetkili',
+                items: invoice.items?.map(i => ({ name: i.product?.name || i.product })),
+                totalAmount: invoice.totalAmount,
+                currency: invoice.currency
+            });
+            setEmailModal({ open: true, content: res.data.emailContent, loading: false });
+        } catch (error) {
+            console.error('Email Gen Error:', error);
+            setEmailModal({ open: true, content: 'E-posta oluşturulurken bir hata oluştu.', loading: false });
+        }
     };
 
     return (
@@ -60,8 +81,8 @@ const InvoiceDetailsModal = ({ isOpen, onClose, invoice, onApprove, onPayment, o
                         </div>
                         <div className="flex items-center space-x-2">
                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${isPaid ? 'bg-emerald-100 text-emerald-800' :
-                                    isApproved ? 'bg-amber-100 text-amber-800' :
-                                        'bg-slate-100 text-slate-800'
+                                isApproved ? 'bg-amber-100 text-amber-800' :
+                                    'bg-slate-100 text-slate-800'
                                 }`}>
                                 {isPaid ? 'Ödendi' : isApproved ? 'Onaylandı' : 'Taslak'}
                             </span>
@@ -187,6 +208,13 @@ const InvoiceDetailsModal = ({ isOpen, onClose, invoice, onApprove, onPayment, o
                                 <Print className="w-4 h-4 mr-2" />
                                 Yazdır
                             </button>
+                            <button
+                                onClick={handleGenerateEmail}
+                                className="inline-flex items-center px-4 py-2 border border-purple-200 shadow-sm text-sm font-medium rounded-lg text-purple-700 bg-purple-50 hover:bg-purple-100"
+                            >
+                                <SparklesIcon className="w-4 h-4 mr-2" />
+                                AI Mail
+                            </button>
                             {isDraft && (
                                 <>
                                     <button
@@ -241,7 +269,54 @@ const InvoiceDetailsModal = ({ isOpen, onClose, invoice, onApprove, onPayment, o
                 invoice={invoice}
                 maxAmount={remainingAmount}
             />
-        </div>
+
+            {/* AI Email Modal */}
+            {
+                emailModal.open && (
+                    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+                        <div className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl animate-in zoom-in duration-200">
+                            <div className="flex items-center gap-2 mb-4">
+                                <EmailIcon className="text-purple-600" />
+                                <h3 className="text-lg font-bold text-slate-800">AI E-posta Taslağı</h3>
+                            </div>
+
+                            {emailModal.loading ? (
+                                <div className="flex flex-col items-center py-8">
+                                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600"></div>
+                                    <p className="mt-4 text-sm text-slate-500">Taslak yazılıyor...</p>
+                                </div>
+                            ) : (
+                                <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 mb-6 max-h-96 overflow-y-auto">
+                                    <pre className="text-sm text-slate-700 whitespace-pre-wrap font-sans leading-relaxed">
+                                        {emailModal.content}
+                                    </pre>
+                                </div>
+                            )}
+
+                            <div className="flex justify-end gap-3">
+                                <button
+                                    onClick={() => setEmailModal({ ...emailModal, open: false })}
+                                    className="px-4 py-2 text-slate-600 hover:text-slate-800 font-medium text-sm transition-colors"
+                                >
+                                    Kapat
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(emailModal.content);
+                                        alert('Kopyalandı!');
+                                        setEmailModal({ ...emailModal, open: false });
+                                    }}
+                                    disabled={emailModal.loading}
+                                    className="px-4 py-2 bg-purple-600 text-white rounded-lg font-bold text-sm hover:bg-purple-700 transition-colors shadow-sm shadow-purple-500/30 disabled:opacity-50"
+                                >
+                                    Kopyala
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+        </div >
     );
 };
 
