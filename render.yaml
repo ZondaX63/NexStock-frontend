@@ -1,0 +1,9 @@
+services:
+  - type: static
+    name: nexstock-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    publishPath: ./build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://nexstock-backend.onrender.com/api # Bu URL'i backend'i deploy ettikten sonra güncelleyin
