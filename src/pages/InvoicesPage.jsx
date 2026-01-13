@@ -10,7 +10,9 @@ import {
     CheckCircle,
     Schedule,
     Error,
-    Visibility
+    Visibility,
+    AutoAwesome as SparklesIcon,
+    AddPhotoAlternate
 } from '@mui/icons-material';
 import api from '../api';
 import InvoiceFormModal from '../components/InvoiceFormModal';
@@ -23,6 +25,8 @@ const InvoicesPage = () => {
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
+    const [prefillData, setPrefillData] = useState(null);
+    const [isScanning, setIsScanning] = useState(false);
 
     const fetchInvoices = async () => {
         try {
@@ -97,6 +101,44 @@ const InvoicesPage = () => {
         setIsDetailsModalOpen(true);
     };
 
+    const handleScanReceipt = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setIsScanning(true);
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const res = await api.post('/ai/analyze-receipt', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            // Prepare prefill data for InvoiceFormModal
+            const data = res.data;
+            setPrefillData({
+                invoiceNumber: data.invoiceNumber || '',
+                date: data.date || new Date().toISOString().split('T')[0],
+                items: data.products?.map(p => ({
+                    product: '', // Needs careful matching or manual selection later
+                    productName: p.name, // Temporary for UI if needed
+                    quantity: p.quantity || 1,
+                    unitPrice: p.price || 0,
+                    taxRate: 18,
+                    total: p.price * p.quantity * 1.18
+                })) || []
+            });
+            setSelectedInvoice(null);
+            setIsFormModalOpen(true);
+        } catch (error) {
+            console.error('OCR Error:', error);
+            alert('Fatura taranırken bir hata oluştu veya görsel okunamadı.');
+        } finally {
+            setIsScanning(false);
+            e.target.value = ''; // Reset input
+        }
+    };
+
     const openEdit = (invoice) => {
         setSelectedInvoice(invoice);
         setIsDetailsModalOpen(false);
@@ -146,13 +188,34 @@ const InvoicesPage = () => {
                     <h2 className="text-2xl font-bold text-slate-800">Faturalar</h2>
                     <p className="text-slate-500 mt-1">Tüm alış ve satış faturalarınızı buradan yönetebilirsiniz.</p>
                 </div>
-                <button
-                    onClick={() => { setSelectedInvoice(null); setIsFormModalOpen(true); }}
-                    className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm shadow-indigo-500/30"
-                >
-                    <Add className="mr-2 h-5 w-5" />
-                    Yeni Fatura
-                </button>
+                <div className="flex gap-3">
+                    <label className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer shadow-sm ${isScanning
+                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                            : 'bg-white border border-indigo-200 text-indigo-600 hover:bg-indigo-50 active:scale-95'
+                        }`}>
+                        <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleScanReceipt}
+                            disabled={isScanning}
+                        />
+                        {isScanning ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-indigo-600 mr-2"></div>
+                        ) : (
+                            <SparklesIcon className="mr-2 h-4 w-4" />
+                        )}
+                        {isScanning ? 'Taranıyor...' : 'AI ile Tara'}
+                    </label>
+
+                    <button
+                        onClick={() => { setSelectedInvoice(null); setPrefillData(null); setIsFormModalOpen(true); }}
+                        className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm shadow-indigo-500/30"
+                    >
+                        <Add className="mr-2 h-5 w-5" />
+                        Yeni Fatura
+                    </button>
+                </div>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
@@ -272,9 +335,10 @@ const InvoicesPage = () => {
 
             <InvoiceFormModal
                 isOpen={isFormModalOpen}
-                onClose={() => setIsFormModalOpen(false)}
+                onClose={() => { setIsFormModalOpen(false); setPrefillData(null); }}
                 onSave={handleSave}
                 invoice={selectedInvoice}
+                prefillData={prefillData}
             />
 
             <InvoiceDetailsModal

@@ -10,7 +10,8 @@ import {
     People,
     ArrowForward,
     CheckCircle,
-    Assessment as AssessmentIcon
+    Assessment as AssessmentIcon,
+    AutoAwesome as SparklesIcon
 } from '@mui/icons-material';
 import KPICard from './KPICard';
 import api from '../api';
@@ -25,6 +26,8 @@ const DashboardView = () => {
         criticalStockCount: 0,
         warnings: []
     });
+    const [aiInsight, setAiInsight] = useState('');
+    const [aiLoading, setAiLoading] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -90,6 +93,19 @@ const DashboardView = () => {
         fetchData();
     }, []);
 
+    const handleGetAIInsights = async () => {
+        setAiLoading(true);
+        try {
+            const res = await api.get('/ai/insights');
+            setAiInsight(res.data.insight);
+        } catch (error) {
+            console.error('AI Insight Error:', error);
+            setAiInsight('Üzgünüm, şu an analiz yapamıyorum. Lütfen daha sonra tekrar deneyin.');
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
     const kpiData = [
         {
             title: 'Toplam Cari Bakiye',
@@ -134,9 +150,62 @@ const DashboardView = () => {
         <div className="space-y-8">
             {/* Header */}
             <div>
-                <h2 className="text-2xl font-bold text-slate-800">Genel Bakış</h2>
-                <p className="text-slate-500 mt-1">Hoş geldiniz, işletmenizin güncel durumu burada.</p>
+                <div className="flex justify-between items-center mb-1">
+                    <h2 className="text-2xl font-bold text-slate-800">Genel Bakış</h2>
+                    <button
+                        onClick={handleGetAIInsights}
+                        disabled={aiLoading}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${aiLoading
+                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg hover:from-indigo-700 hover:to-purple-700 active:scale-95'
+                            }`}
+                    >
+                        <SparklesIcon style={{ fontSize: 18 }} />
+                        {aiLoading ? 'Analiz Ediliyor...' : 'Yapay Zeka Analizi'}
+                    </button>
+                </div>
+                <p className="text-slate-500">Hoş geldiniz, işletmenizin güncel durumu burada.</p>
             </div>
+
+            {/* AI Insight Card */}
+            {(aiInsight || aiLoading) && (
+                <div className="bg-gradient-to-br from-indigo-600/5 to-purple-600/5 border border-indigo-100 rounded-3xl p-6 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <SparklesIcon style={{ fontSize: 120 }} />
+                    </div>
+                    <div className="relative flex flex-col md:flex-row gap-6">
+                        <div className="flex-shrink-0">
+                            <div className="h-12 w-12 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                                <SparklesIcon />
+                            </div>
+                        </div>
+                        <div className="flex-1">
+                            <h3 className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">
+                                Yapay Zeka Danışman Önerileri
+                            </h3>
+                            {aiLoading ? (
+                                <div className="space-y-3">
+                                    <div className="h-4 bg-slate-200 rounded-md w-3/4 animate-pulse"></div>
+                                    <div className="h-4 bg-slate-200 rounded-md w-full animate-pulse"></div>
+                                    <div className="h-4 bg-slate-200 rounded-md w-1/2 animate-pulse"></div>
+                                </div>
+                            ) : (
+                                <div className="prose prose-slate max-w-none text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">
+                                    {aiInsight}
+                                </div>
+                            )}
+                            {!aiLoading && (
+                                <button
+                                    onClick={() => setAiInsight('')}
+                                    className="mt-4 text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors"
+                                >
+                                    Bildirimi Kapat
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* KPI Cards */}
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">

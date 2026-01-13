@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Close } from '@mui/icons-material';
+import { Close, AutoAwesome as SparklesIcon } from '@mui/icons-material';
+import api from '../api';
 
 const ProductFormModal = ({ isOpen, onClose, onSave, product, categories = [], brands = [] }) => {
     const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ const ProductFormModal = ({ isOpen, onClose, onSave, product, categories = [], b
         priceUSD: '',
         priceEUR: ''
     });
+    const [aiLoading, setAiLoading] = useState(false);
 
     useEffect(() => {
         if (product) {
@@ -74,6 +76,31 @@ const ProductFormModal = ({ isOpen, onClose, onSave, product, categories = [], b
     const handleSubmit = (e) => {
         e.preventDefault();
         onSave(formData);
+    };
+
+    const handleAiDescription = async () => {
+        if (!formData.name) {
+            alert('Lütfen önce ürün adını giriniz.');
+            return;
+        }
+
+        setAiLoading(true);
+        try {
+            const categoryObj = categories.find(c => c._id === formData.category);
+            const res = await api.post('/ai/generate-description', {
+                name: formData.name,
+                categoryName: categoryObj?.name
+            });
+            setFormData(prev => ({
+                ...prev,
+                description: res.data.description
+            }));
+        } catch (error) {
+            console.error('AI Description Error:', error);
+            alert('Açıklama oluşturulurken bir hata oluştu.');
+        } finally {
+            setAiLoading(false);
+        }
     };
 
     if (!isOpen) return null;
@@ -135,13 +162,25 @@ const ProductFormModal = ({ isOpen, onClose, onSave, product, categories = [], b
                                 </div>
 
                                 <div className="sm:col-span-2">
-                                    <label className="block text-sm font-medium text-slate-700">Açıklama</label>
+                                    <div className="flex justify-between items-center mb-1">
+                                        <label className="block text-sm font-medium text-slate-700">Açıklama</label>
+                                        <button
+                                            type="button"
+                                            onClick={handleAiDescription}
+                                            disabled={aiLoading}
+                                            className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors disabled:text-slate-400"
+                                        >
+                                            <SparklesIcon style={{ fontSize: 14 }} />
+                                            {aiLoading ? 'Oluşturuluyor...' : 'AI ile Yaz'}
+                                        </button>
+                                    </div>
                                     <textarea
                                         name="description"
                                         rows={3}
                                         value={formData.description}
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                        placeholder="Ürün hakkında kısa bilgi..."
                                     />
                                 </div>
 

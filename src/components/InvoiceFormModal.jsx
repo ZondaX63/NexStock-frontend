@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Close, Add, Delete } from '@mui/icons-material';
 import api from '../api';
 
-const InvoiceFormModal = ({ isOpen, onClose, onSave, invoice, formType = 'invoice' }) => {
+const InvoiceFormModal = ({ isOpen, onClose, onSave, invoice, prefillData, formType = 'invoice' }) => {
     const [customers, setCustomers] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
     const [products, setProducts] = useState([]);
@@ -88,6 +88,29 @@ const InvoiceFormModal = ({ isOpen, onClose, onSave, invoice, formType = 'invoic
                 totalAmount: invoice.totalAmount || 0,
                 status: invoice.status || 'pending'
             });
+        } else if (prefillData) {
+            setFormData({
+                invoiceNumber: prefillData.invoiceNumber || '',
+                type: 'purchase', // Default to purchase for receipts
+                customer: '',
+                date: prefillData.date || new Date().toISOString().split('T')[0],
+                dueDate: '',
+                currency: 'TRY',
+                items: prefillData.items?.length > 0
+                    ? prefillData.items.map(item => ({
+                        product: '', // User needs to select the product
+                        quantity: item.quantity || 1,
+                        unitPrice: item.unitPrice || 0,
+                        taxRate: item.taxRate || 18,
+                        total: item.total || 0,
+                        placeholderName: item.productName // Keep for display
+                    }))
+                    : [{ product: '', quantity: 1, unitPrice: 0, taxRate: 18, total: 0 }],
+                subtotal: prefillData.items?.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0) || 0,
+                taxTotal: prefillData.items?.reduce((sum, item) => sum + (item.quantity * item.unitPrice * 0.18), 0) || 0,
+                totalAmount: prefillData.items?.reduce((sum, item) => sum + (item.quantity * item.unitPrice * 1.18), 0) || 0,
+                status: 'pending'
+            });
         } else {
             const prefix = formType === 'offer' ? 'OFF' : formType === 'order' ? 'ORD' : 'INV';
             setFormData({
@@ -104,7 +127,7 @@ const InvoiceFormModal = ({ isOpen, onClose, onSave, invoice, formType = 'invoic
                 status: 'pending'
             });
         }
-    }, [invoice, isOpen, formType]);
+    }, [invoice, prefillData, isOpen, formType]);
 
     useEffect(() => {
         const subtotal = formData.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
@@ -349,13 +372,17 @@ const InvoiceFormModal = ({ isOpen, onClose, onSave, invoice, formType = 'invoic
                                                             value={item.product}
                                                             onChange={(e) => handleItemChange(index, 'product', e.target.value)}
                                                             required
-                                                            className="block w-full border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                                            className={`block w-full rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${!item.product && item.placeholderName ? 'border-amber-300 bg-amber-50' : 'border-slate-300'
+                                                                }`}
                                                         >
-                                                            <option value="">Seçiniz</option>
+                                                            <option value="">{item.placeholderName ? `Eşleştir: ${item.placeholderName}` : 'Seçiniz'}</option>
                                                             {products.map(p => (
                                                                 <option key={p._id} value={p._id}>{p.name}</option>
                                                             ))}
                                                         </select>
+                                                        {item.placeholderName && !item.product && (
+                                                            <p className="mt-1 text-[10px] text-amber-600 font-medium">AI Taraması: "{item.placeholderName}"</p>
+                                                        )}
                                                     </td>
                                                     <td className="px-4 py-2">
                                                         <input

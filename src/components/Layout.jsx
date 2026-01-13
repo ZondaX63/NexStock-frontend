@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
+import NexAIAssistant from './NexAIAssistant';
 
 const Layout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,6 +25,8 @@ const Layout = () => {
                     </div>
                 </main>
             </div>
+
+            <NexAIAssistant />
 
             {/* Mobile Sidebar Overlay */}
             {sidebarOpen && (

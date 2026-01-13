@@ -4,7 +4,9 @@ import {
     Search,
     Edit,
     Delete,
-    FilterList
+    Delete,
+    FilterList,
+    AutoAwesome as SparklesIcon
 } from '@mui/icons-material';
 import api from '../api';
 import ProductFormModal from '../components/ProductFormModal';
@@ -17,6 +19,7 @@ const ProductsPage = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
+    const [predictionModel, setPredictionModel] = useState({ open: false, text: '', loading: false });
 
     const fetchProducts = async () => {
         try {
@@ -71,6 +74,17 @@ const ProductsPage = () => {
             } catch (error) {
                 console.error('Error deleting product:', error);
             }
+        }
+    };
+
+    const handlePredictStock = async (id) => {
+        setPredictionModel({ open: true, text: '', loading: true });
+        try {
+            const res = await api.get(`/ai/predict-stock/${id}`);
+            setPredictionModel({ open: true, text: res.data.forecast, loading: false });
+        } catch (error) {
+            console.error('Error predicting stock:', error);
+            setPredictionModel({ open: true, text: 'Tahmin yapılırken bir hata oluştu.', loading: false });
         }
     };
 
@@ -172,6 +186,13 @@ const ProductsPage = () => {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <button
+                                                onClick={() => handlePredictStock(product._id)}
+                                                className="text-purple-600 hover:text-purple-900 mr-4"
+                                                title="AI Stok Tahmini"
+                                            >
+                                                <SparklesIcon className="h-5 w-5" />
+                                            </button>
+                                            <button
                                                 onClick={() => { setSelectedProduct(product); setIsModalOpen(true); }}
                                                 className="text-indigo-600 hover:text-indigo-900 mr-4"
                                             >
@@ -200,6 +221,36 @@ const ProductsPage = () => {
                 categories={categories}
                 brands={brands}
             />
+
+            {/* AI Prediction Modal */}
+            {predictionModel.open && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm shadow-2xl">
+                    <div className="bg-white rounded-2xl p-6 max-w-md w-full animate-in zoom-in duration-200">
+                        <div className="flex items-center gap-2 mb-4">
+                            <SparklesIcon className="text-purple-600" />
+                            <h3 className="text-lg font-bold text-slate-800">Akıllı Stok Tahmini</h3>
+                        </div>
+                        {predictionModel.loading ? (
+                            <div className="flex flex-col items-center py-8">
+                                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600"></div>
+                                <p className="mt-4 text-sm text-slate-500">Veriler analiz ediliyor...</p>
+                            </div>
+                        ) : (
+                            <div className="bg-purple-50/50 rounded-xl p-4 border border-purple-100 mb-6">
+                                <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
+                                    {predictionModel.text}
+                                </p>
+                            </div>
+                        )}
+                        <button
+                            onClick={() => setPredictionModel({ ...predictionModel, open: false })}
+                            className="w-full py-2 bg-slate-800 text-white rounded-lg font-bold hover:bg-slate-900 transition-colors"
+                        >
+                            Kapat
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
