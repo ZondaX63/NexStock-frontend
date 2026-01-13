@@ -4,7 +4,6 @@ import {
     Search,
     Edit,
     Delete,
-    Delete,
     FilterList,
     AutoAwesome as SparklesIcon
 } from '@mui/icons-material';
