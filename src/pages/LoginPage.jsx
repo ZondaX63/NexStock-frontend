@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api';
+import { AppContext } from '../contexts/AppContext';
 import { Login as LoginIcon } from '@mui/icons-material';
 
 export default function LoginPage() {
@@ -9,6 +10,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { loadUser } = useContext(AppContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,8 +25,9 @@ export default function LoginPage() {
     try {
       const res = await api.post('/auth/login', { email, password });
       localStorage.setItem('token', res.data.token);
+      await loadUser();
       navigate('/panel');
-      window.location.reload();
+
     } catch (err) {
       const errorMessage =
         err.response?.data?.errors?.map(e => e.msg).join(' ') ||

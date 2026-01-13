@@ -81,13 +81,15 @@ export const AppProvider = ({ children }) => {
   }, [fetchUser, fetchNotifications]);
 
   return (
-    <AppContext.Provider value={{ 
-      user, 
-      notifications, 
-      setUser, 
-      setNotifications, 
-      refreshTriggers, 
-      triggerRefresh 
+    <AppContext.Provider value={{
+      user,
+      notifications,
+      setUser,
+      setNotifications,
+
+      refreshTriggers,
+      triggerRefresh,
+      loadUser: fetchUser
     }}>
       {children}
     </AppContext.Provider>
