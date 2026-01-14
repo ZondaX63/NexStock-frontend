@@ -9,7 +9,8 @@ const CustomerFormModal = ({ isOpen, onClose, onSave, customer }) => {
         address: '',
         type: 'customer', // 'customer' or 'supplier'
         taxNumber: '',
-        taxOffice: ''
+        taxOffice: '',
+        openingBalance: 0 // New field
     });
 
     useEffect(() => {
@@ -21,7 +22,8 @@ const CustomerFormModal = ({ isOpen, onClose, onSave, customer }) => {
                 address: customer.address || '',
                 type: customer.type || 'customer',
                 taxNumber: customer.taxNumber || '',
-                taxOffice: customer.taxOffice || ''
+                taxOffice: customer.taxOffice || '',
+                openingBalance: customer.openingBalance || 0 // Assuming backend supports it or we ignore it on update
             });
         } else {
             setFormData({
@@ -31,7 +33,8 @@ const CustomerFormModal = ({ isOpen, onClose, onSave, customer }) => {
                 address: '',
                 type: 'customer',
                 taxNumber: '',
-                taxOffice: ''
+                taxOffice: '',
+                openingBalance: 0
             });
         }
     }, [customer, isOpen]);
@@ -154,6 +157,23 @@ const CustomerFormModal = ({ isOpen, onClose, onSave, customer }) => {
                                         className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                     />
                                 </div>
+                            </div>
+
+                             {/* Balance Field - Editable only for new items or specific implementations */}
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700">
+                                    Bakiye (Başlangıç/Düzeltme)
+                                </label>
+                                <input
+                                    type="number"
+                                    name="openingBalance"
+                                    value={formData.openingBalance || ''}
+                                    onChange={handleChange}
+                                    placeholder="0.00"
+                                    disabled={!!customer} 
+                                    className={`mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${customer ? 'bg-gray-100 text-gray-500' : ''}`}
+                                />
+                                {customer && <p className="text-xs text-slate-500 mt-1">Bakiye sadece işlem eklenerek güncellenmelidir.</p>}
                             </div>
 
                             <div className="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse -mx-6 -mb-4 mt-6">

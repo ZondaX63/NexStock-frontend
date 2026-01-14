@@ -119,7 +119,7 @@ const InvoicesPage = () => {
                 invoiceNumber: data.invoiceNumber || '',
                 date: data.date || new Date().toISOString().split('T')[0],
                 items: data.products?.map(p => ({
-                    product: '', // Needs careful matching or manual selection later
+                    product: p.productId || '', // AI suggested or backend matched ID
                     productName: p.name, // Temporary for UI if needed
                     quantity: p.quantity || 1,
                     unitPrice: p.price || 0,

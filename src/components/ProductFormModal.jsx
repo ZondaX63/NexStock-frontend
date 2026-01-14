@@ -24,6 +24,16 @@ const ProductFormModal = ({ isOpen, onClose, onSave, product, categories = [], b
     const [aiLoading, setAiLoading] = useState(false);
 
     useEffect(() => {
+        const fetchNextSku = async () => {
+            try {
+                const res = await api.get('/products/next-sku');
+                setFormData(prev => ({ ...prev, sku: res.data.sku }));
+            } catch (err) {
+                console.error('Error fetching SKU:', err);
+                setFormData(prev => ({ ...prev, sku: 'STK-' + Date.now() }));
+            }
+        };
+
         if (product) {
             setFormData({
                 name: product.name || '',
@@ -62,6 +72,10 @@ const ProductFormModal = ({ isOpen, onClose, onSave, product, categories = [], b
                 priceUSD: '',
                 priceEUR: ''
             });
+
+            if (isOpen) {
+                fetchNextSku();
+            }
         }
     }, [product, isOpen]);
 

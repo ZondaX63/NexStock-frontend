@@ -74,6 +74,100 @@ const AccountForm = ({ open, onClose, onSave, form, onChange }) => {
                                 </select>
                             </div>
 
+                            {/* Banka Özel Alanları */}
+                            {form.type === 'bank' && (
+                                <div className="space-y-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                                    <h4 className="text-sm font-semibold text-slate-700">Banka Bilgileri</h4>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700">Banka Adı</label>
+                                        <input
+                                            type="text"
+                                            name="bankName"
+                                            value={form.bankName || ''}
+                                            onChange={onChange}
+                                            placeholder="Örn: Garanti BBVA"
+                                            className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 sm:text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700">IBAN</label>
+                                        <input
+                                            type="text"
+                                            name="iban"
+                                            value={form.iban || ''}
+                                            onChange={onChange}
+                                            placeholder="TR..."
+                                            className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 sm:text-sm"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700">Şube Kodu</label>
+                                            <input
+                                                type="text"
+                                                name="branchCode"
+                                                value={form.branchCode || ''}
+                                                onChange={onChange}
+                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 sm:text-sm"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700">Hesap No</label>
+                                            <input
+                                                type="text"
+                                                name="accountNumber"
+                                                value={form.accountNumber || ''}
+                                                onChange={onChange}
+                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 sm:text-sm"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Kredi Kartı Özel Alanları */}
+                            {form.type === 'credit_card' && (
+                                <div className="space-y-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                                    <h4 className="text-sm font-semibold text-slate-700">Kredi Kartı Detayları</h4>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700">Kredi Limiti</label>
+                                        <input
+                                            type="number"
+                                            name="creditLimit"
+                                            value={form.creditLimit || ''}
+                                            onChange={onChange}
+                                            className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 sm:text-sm"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700">Hesap Kesim Günü</label>
+                                            <input
+                                                type="number"
+                                                min="1" max="31"
+                                                name="cutoffDay"
+                                                value={form.cutoffDay || ''}
+                                                onChange={onChange}
+                                                placeholder="1-31"
+                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 sm:text-sm"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700">Son Ödeme Günü</label>
+                                            <input
+                                                type="number"
+                                                min="1" max="31"
+                                                name="paymentDay"
+                                                value={form.paymentDay || ''}
+                                                onChange={onChange}
+                                                placeholder="1-31"
+                                                className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 sm:text-sm"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700">Bakiye {form._id ? '(Düzenlenemez)' : '*'}</label>

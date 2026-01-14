@@ -97,7 +97,9 @@ const AccountPage = () => {
             cariType: group === 'customer' ? 'customer' : group === 'supplier' ? 'supplier' : '',
             email: '',
             phone: '',
-            address: ''
+            address: '',
+            bankName: '', iban: '', branchCode: '', accountNumber: '',
+            creditLimit: '', cutoffDay: '', paymentDay: ''
         });
         setIsEdit(false);
         setFormOpen(true);

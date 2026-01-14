@@ -18,13 +18,20 @@ export const AppProvider = ({ children }) => {
   const fetchUser = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      if (!token) return;
+      if (!token) {
+        setUser(null);
+        return;
+      }
       const response = await api.get('/auth/me');
       setUser(response.data);
     } catch (error) {
-      // Suppress noisy logs for unauthorized (no token / expired)
-      if (error.response?.status === 401) return;
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        setUser(null);
+        return;
+      }
       console.error('Failed to fetch user:', error);
+      setUser(null);
     }
   }, []);
 
