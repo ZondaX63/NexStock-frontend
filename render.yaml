@@ -7,3 +7,7 @@ services:
     envVars:
       - key: REACT_APP_API_URL
         value: https://nexstock-backend.onrender.com/api # Bu URL'i backend'i deploy ettikten sonra güncelleyin
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
