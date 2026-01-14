@@ -177,7 +177,7 @@ const DashboardView = () => {
             {/* Header */}
             <div>
                 <div className="flex justify-between items-center mb-1">
-                    <h2 className="text-2xl font-bold text-slate-800">Genel Bakış</h2>
+                    <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Genel Bakış</h2>
                     <button
                         onClick={handleGetAIInsights}
                         disabled={aiLoading}
@@ -190,7 +190,7 @@ const DashboardView = () => {
                         {aiLoading ? 'Analiz Ediliyor...' : 'Yapay Zeka Analizi'}
                     </button>
                 </div>
-                <p className="text-slate-500">Hoş geldiniz, işletmenizin güncel durumu burada.</p>
+                <p className="text-slate-500 dark:text-slate-400">Hoş geldiniz, işletmenizin güncel durumu burada.</p>
             </div>
 
             {/* AI Insight Card */}
@@ -216,14 +216,14 @@ const DashboardView = () => {
                                     <div className="h-4 bg-slate-200 rounded-md w-1/2 animate-pulse"></div>
                                 </div>
                             ) : (
-                                <div className="prose prose-slate max-w-none text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">
+                                <div className="prose prose-slate max-w-none text-slate-600 dark:text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">
                                     {aiInsight}
                                 </div>
                             )}
                             {!aiLoading && (
                                 <button
                                     onClick={() => setAiInsight('')}
-                                    className="mt-4 text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors"
+                                    className="mt-4 text-xs font-bold text-slate-400 hover:text-slate-600 dark:text-slate-300 transition-colors"
                                 >
                                     Bildirimi Kapat
                                 </button>
@@ -242,11 +242,11 @@ const DashboardView = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Chart Placeholder */}
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 lg:col-span-2">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 lg:col-span-2">
                     <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h3 className="text-lg font-bold text-slate-800">Finansal Analiz</h3>
-                            <p className="text-sm text-slate-500">Son 7 gün satış grafiği</p>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white">Finansal Analiz</h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">Son 7 gün satış grafiği</p>
                         </div>
                     </div>
                     <div className="h-80 w-full" style={{ minHeight: 320 }}>
@@ -269,19 +269,19 @@ const DashboardView = () => {
                 </div>
 
                 {/* Warnings List */}
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6">
                     <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-lg font-bold text-slate-800">Kritik Bildirimler</h3>
+                        <h3 className="text-lg font-bold text-slate-800 dark:text-white">Kritik Bildirimler</h3>
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-600">
                             {stats.warnings.length} Yeni
                         </span>
                     </div>
                     <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
                         {stats.warnings.length === 0 ? (
-                            <p className="text-sm text-slate-500 text-center py-4">Bildirim bulunmuyor.</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 text-center py-4">Bildirim bulunmuyor.</p>
                         ) : (
                             stats.warnings.map((warning) => (
-                                <div key={warning.id} className="flex items-start p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors border border-slate-100">
+                                <div key={warning.id} className="flex items-start p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors border border-slate-100 dark:border-slate-700">
                                     <div className="flex-shrink-0 mt-0.5">
                                         {warning.severity === 'high' ? (
                                             <div className="p-2 bg-red-100 rounded-lg">
@@ -298,13 +298,13 @@ const DashboardView = () => {
                                             <h4 className="text-sm font-semibold text-slate-900">{warning.type === 'invoice' ? 'Fatura Uyarısı' : 'Stok Uyarısı'}</h4>
                                             <span className="text-xs font-medium text-slate-400">{warning.date}</span>
                                         </div>
-                                        <p className="text-sm text-slate-600 mt-1 leading-relaxed">{warning.message}</p>
+                                        <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">{warning.message}</p>
                                     </div>
                                 </div>
                             ))
                         )}
                     </div>
-                    <button className="w-full mt-6 py-3 text-sm font-medium text-slate-600 bg-slate-50 rounded-xl hover:bg-slate-100 hover:text-slate-900 transition-colors">
+                    <button className="w-full mt-6 py-3 text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-50 rounded-xl hover:bg-slate-100 hover:text-slate-900 transition-colors">
                         Tüm Bildirimleri Gör
                     </button>
                 </div>
@@ -313,8 +313,8 @@ const DashboardView = () => {
 
             {/* Top Products Chart (New Row) */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-                    <h3 className="text-lg font-bold text-slate-800 mb-6">En Çok Satan Ürünler</h3>
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6">
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6">En Çok Satan Ürünler</h3>
                     <div className="h-64 w-full" style={{ minHeight: 240 }}>
                         <ResponsiveContainer width="100%" height={240}>
                             <BarChart data={topProducts} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
@@ -331,11 +331,11 @@ const DashboardView = () => {
 
             {/* Quick Actions */}
             <div>
-                <h3 className="text-lg font-bold text-slate-800 mb-4">Hızlı İşlemler</h3>
+                <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4">Hızlı İşlemler</h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <button
                         onClick={() => navigate('/panel/invoices')}
-                        className="flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-indigo-200 hover:-translate-y-1 transition-all duration-300 group"
+                        className="flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md hover:border-indigo-200 hover:-translate-y-1 transition-all duration-300 group"
                     >
                         <div className="h-12 w-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                             <Add className="h-6 w-6" />
@@ -345,7 +345,7 @@ const DashboardView = () => {
 
                     <button
                         onClick={() => navigate('/panel/products')}
-                        className="flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-emerald-200 hover:-translate-y-1 transition-all duration-300 group"
+                        className="flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md hover:border-emerald-200 hover:-translate-y-1 transition-all duration-300 group"
                     >
                         <div className="h-12 w-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                             <Inventory className="h-6 w-6" />
@@ -355,7 +355,7 @@ const DashboardView = () => {
 
                     <button
                         onClick={() => navigate('/panel/customers')}
-                        className="flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-200 hover:-translate-y-1 transition-all duration-300 group"
+                        className="flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md hover:border-blue-200 hover:-translate-y-1 transition-all duration-300 group"
                     >
                         <div className="h-12 w-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                             <People className="h-6 w-6" />
@@ -365,7 +365,7 @@ const DashboardView = () => {
 
                     <button
                         onClick={() => navigate('/panel/account')}
-                        className="flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-purple-200 hover:-translate-y-1 transition-all duration-300 group"
+                        className="flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md hover:border-purple-200 hover:-translate-y-1 transition-all duration-300 group"
                     >
                         <div className="h-12 w-12 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
                             <ArrowForward className="h-6 w-6" />

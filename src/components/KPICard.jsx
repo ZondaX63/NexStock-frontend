@@ -3,13 +3,13 @@ import { TrendingUp, TrendingDown } from '@mui/icons-material';
 
 const KPICard = ({ title, value, trend, isPositive, icon, isWarning }) => {
     return (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-300">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow duration-300">
             <div className="flex items-start justify-between">
                 <div>
-                    <p className="text-sm font-medium text-slate-500">{title}</p>
-                    <h3 className="text-2xl font-bold text-slate-800 mt-2">{value}</h3>
+                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{title}</p>
+                    <h3 className="text-2xl font-bold text-slate-800 dark:text-white mt-2">{value}</h3>
                 </div>
-                <div className={`p-3 rounded-xl ${isWarning ? 'bg-amber-50 text-amber-500' : 'bg-indigo-50 text-indigo-500'}`}>
+                <div className={`p-3 rounded-xl ${isWarning ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-500' : 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-500'}`}>
                     {icon}
                 </div>
             </div>

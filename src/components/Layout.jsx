@@ -10,7 +10,7 @@ const Layout = () => {
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
     return (
-        <div className="flex h-screen bg-slate-50 font-sans">
+        <div className="flex h-screen bg-slate-50 dark:bg-slate-900 font-sans transition-colors duration-200">
             <Sidebar
                 isOpen={sidebarOpen}
                 toggleSidebar={toggleSidebar}
@@ -19,8 +19,8 @@ const Layout = () => {
             <div className="flex-1 flex flex-col overflow-hidden">
                 <Topbar toggleSidebar={toggleSidebar} />
 
-                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-6 lg:p-10">
-                    <div className="max-w-7xl mx-auto">
+                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 dark:bg-slate-900 p-6 lg:p-10 transition-colors duration-200">
+                    <div className="max-w-7xl mx-auto dark:text-slate-200">
                         <Outlet />
                     </div>
                 </main>

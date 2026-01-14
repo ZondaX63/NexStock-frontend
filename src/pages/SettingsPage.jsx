@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Settings as SettingsIcon, Save } from '@mui/icons-material';
+import React, { useState, useEffect, useContext } from 'react';
+import { Settings as SettingsIcon, Save, DarkMode, LightMode } from '@mui/icons-material';
 import api from '../api';
+import { AppContext } from '../contexts/AppContext';
 
 const SettingsPage = () => {
+    const { darkMode, toggleDarkMode } = useContext(AppContext);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [activeTab, setActiveTab] = useState('general');
@@ -31,9 +33,6 @@ const SettingsPage = () => {
         setCompany({ ...company, [e.target.name]: e.target.value });
     };
 
-    const handleSettingsChange = (e) => {
-        setSettings({ ...settings, [e.target.name]: e.target.value });
-    };
 
     const handleAddUnit = () => {
         if (unitInput && !settings.units.includes(unitInput)) {
@@ -81,18 +80,18 @@ const SettingsPage = () => {
     }
 
     if (!settings || !company) {
-        return <div className="text-center text-slate-500 py-10">Ayarlar yüklenemedi.</div>;
+        return <div className="text-center text-slate-500 dark:text-slate-400 py-10">Ayarlar yüklenemedi.</div>;
     }
 
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-800 flex items-center">
+                    <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 dark:text-white flex items-center">
                         <SettingsIcon className="mr-2" />
                         Ayarlar
                     </h2>
-                    <p className="text-slate-500 mt-1">Sistem ayarlarını buradan yönetebilirsiniz.</p>
+                    <p className="text-slate-500 dark:text-slate-400 dark:text-slate-400 mt-1">Sistem ayarlarını buradan yönetebilirsiniz.</p>
                 </div>
                 <button
                     onClick={handleSave}
@@ -104,14 +103,14 @@ const SettingsPage = () => {
                 </button>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div className="border-b border-slate-200">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden transition-colors">
+                <div className="border-b border-slate-200 dark:border-slate-700">
                     <nav className="flex -mb-px">
                         <button
                             onClick={() => setActiveTab('general')}
                             className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === 'general'
-                                    ? 'border-indigo-600 text-indigo-600'
-                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+                                    : 'border-transparent text-slate-500 dark:text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-600'
                                 }`}
                         >
                             Genel Ayarlar
@@ -119,8 +118,8 @@ const SettingsPage = () => {
                         <button
                             onClick={() => setActiveTab('appearance')}
                             className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === 'appearance'
-                                    ? 'border-indigo-600 text-indigo-600'
-                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+                                    : 'border-transparent text-slate-500 dark:text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-600'
                                 }`}
                         >
                             Görünüm
@@ -128,8 +127,8 @@ const SettingsPage = () => {
                         <button
                             onClick={() => setActiveTab('units')}
                             className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === 'units'
-                                    ? 'border-indigo-600 text-indigo-600'
-                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+                                    : 'border-transparent text-slate-500 dark:text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-600'
                                 }`}
                         >
                             Birimler
@@ -137,8 +136,8 @@ const SettingsPage = () => {
                         <button
                             onClick={() => setActiveTab('documents')}
                             className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === 'documents'
-                                    ? 'border-indigo-600 text-indigo-600'
-                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                                    ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
+                                    : 'border-transparent text-slate-500 dark:text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-600'
                                 }`}
                         >
                             Belge Türleri
@@ -150,53 +149,53 @@ const SettingsPage = () => {
                     {activeTab === 'general' && (
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700">Şirket Adı</label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Şirket Adı</label>
                                 <input
                                     type="text"
                                     name="name"
                                     value={company.name}
                                     onChange={handleCompanyChange}
-                                    className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700">E-posta</label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">E-posta</label>
                                 <input
                                     type="email"
                                     name="email"
                                     value={company.email}
                                     onChange={handleCompanyChange}
-                                    className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700">Telefon</label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Telefon</label>
                                 <input
                                     type="text"
                                     name="phone"
                                     value={company.phone}
                                     onChange={handleCompanyChange}
-                                    className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700">Vergi Numarası</label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Vergi Numarası</label>
                                 <input
                                     type="text"
                                     name="taxNumber"
                                     value={company.taxNumber}
                                     onChange={handleCompanyChange}
-                                    className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
                                 />
                             </div>
                             <div className="sm:col-span-2">
-                                <label className="block text-sm font-medium text-slate-700">Adres</label>
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Adres</label>
                                 <textarea
                                     name="address"
                                     rows={3}
                                     value={company.address}
                                     onChange={handleCompanyChange}
-                                    className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="mt-1 block w-full border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
                                 />
                             </div>
                         </div>
@@ -204,44 +203,47 @@ const SettingsPage = () => {
 
                     {activeTab === 'appearance' && (
                         <div>
-                            <h3 className="text-lg font-medium text-slate-900 mb-4">Uygulama Teması</h3>
-                            <div className="space-y-3">
-                                <label className="flex items-center">
-                                    <input
-                                        type="radio"
-                                        name="theme"
-                                        value="light"
-                                        checked={settings.theme === 'light'}
-                                        onChange={handleSettingsChange}
-                                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300"
-                                    />
-                                    <span className="ml-3 text-sm text-slate-700">Açık Mod</span>
-                                </label>
-                                <label className="flex items-center">
-                                    <input
-                                        type="radio"
-                                        name="theme"
-                                        value="dark"
-                                        checked={settings.theme === 'dark'}
-                                        onChange={handleSettingsChange}
-                                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300"
-                                    />
-                                    <span className="ml-3 text-sm text-slate-700">Koyu Mod</span>
-                                </label>
+                            <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-4 dark:text-white">Uygulama Teması</h3>
+                            <div className="flex items-center gap-4">
+                                <button
+                                    onClick={() => darkMode && toggleDarkMode()}
+                                    className={`flex-1 sm:flex-none p-4 rounded-xl border-2 flex flex-col items-center gap-3 transition-all ${
+                                        !darkMode 
+                                            ? 'border-indigo-600 bg-indigo-50 text-indigo-700' 
+                                            : 'border-slate-200 hover:border-slate-300 text-slate-600 dark:border-slate-700 dark:text-slate-400'
+                                    }`}
+                                >
+                                    <LightMode fontSize="large" />
+                                    <span className="font-medium">Açık Mod</span>
+                                </button>
+                                <button
+                                    onClick={() => !darkMode && toggleDarkMode()}
+                                    className={`flex-1 sm:flex-none p-4 rounded-xl border-2 flex flex-col items-center gap-3 transition-all ${
+                                        darkMode 
+                                            ? 'border-indigo-600 bg-slate-800 text-white' 
+                                            : 'border-slate-200 hover:border-slate-300 text-slate-600'
+                                    }`}
+                                >
+                                    <DarkMode fontSize="large" />
+                                    <span className="font-medium">Koyu Mod</span>
+                                </button>
                             </div>
+                            <p className="mt-4 text-sm text-slate-500 dark:text-slate-400 dark:text-slate-400">
+                                Tema tercihi sadece sizin cihazınızda ve tarayıcınızda geçerli olur.
+                            </p>
                         </div>
                     )}
 
                     {activeTab === 'units' && (
                         <div>
-                            <h3 className="text-lg font-medium text-slate-900 mb-4">Ölçü Birimleri Yönetimi</h3>
+                            <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-4">Ölçü Birimleri Yönetimi</h3>
                             <div className="flex gap-2 mb-4">
                                 <input
                                     type="text"
                                     value={unitInput}
                                     onChange={(e) => setUnitInput(e.target.value)}
                                     placeholder="Yeni birim ekle"
-                                    className="flex-1 border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="flex-1 border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
                                 />
                                 <button
                                     onClick={handleAddUnit}
@@ -254,12 +256,12 @@ const SettingsPage = () => {
                                 {settings.units.map((unit) => (
                                     <span
                                         key={unit}
-                                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-slate-100 text-slate-800"
+                                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200"
                                     >
                                         {unit}
                                         <button
                                             onClick={() => handleDeleteUnit(unit)}
-                                            className="ml-2 text-slate-500 hover:text-red-600"
+                                            className="ml-2 text-slate-500 dark:text-slate-400 hover:text-red-600"
                                         >
                                             ×
                                         </button>
@@ -271,14 +273,14 @@ const SettingsPage = () => {
 
                     {activeTab === 'documents' && (
                         <div>
-                            <h3 className="text-lg font-medium text-slate-900 mb-4">Belge Türleri Yönetimi</h3>
+                            <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-4">Belge Türleri Yönetimi</h3>
                             <div className="flex gap-2 mb-4">
                                 <input
                                     type="text"
                                     value={docTypeInput}
                                     onChange={(e) => setDocTypeInput(e.target.value)}
                                     placeholder="Yeni belge türü ekle"
-                                    className="flex-1 border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="flex-1 border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
                                 />
                                 <button
                                     onClick={handleAddDocType}
@@ -291,12 +293,12 @@ const SettingsPage = () => {
                                 {settings.documentTypes.map((docType) => (
                                     <span
                                         key={docType}
-                                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-slate-100 text-slate-800"
+                                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200"
                                     >
                                         {docType}
                                         <button
                                             onClick={() => handleDeleteDocType(docType)}
-                                            className="ml-2 text-slate-500 hover:text-red-600"
+                                            className="ml-2 text-slate-500 dark:text-slate-400 hover:text-red-600"
                                         >
                                             ×
                                         </button>

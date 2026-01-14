@@ -15,6 +15,26 @@ export const AppProvider = ({ children }) => {
     transactions: 0
   });
 
+  // Dark Mode State with LocalStorage persistence
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    setDarkMode(prev => !prev);
+  };
+
+
   const fetchUser = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
@@ -96,7 +116,9 @@ export const AppProvider = ({ children }) => {
 
       refreshTriggers,
       triggerRefresh,
-      loadUser: fetchUser
+      loadUser: fetchUser,
+      darkMode,
+      toggleDarkMode
     }}>
       {children}
     </AppContext.Provider>
