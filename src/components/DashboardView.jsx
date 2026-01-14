@@ -10,9 +10,20 @@ import {
     People,
     ArrowForward,
     CheckCircle,
-    Assessment as AssessmentIcon,
     AutoAwesome as SparklesIcon
 } from '@mui/icons-material';
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    
+} from 'recharts';
 import KPICard from './KPICard';
 import api from '../api';
 
@@ -28,6 +39,8 @@ const DashboardView = () => {
     });
     const [aiInsight, setAiInsight] = useState('');
     const [aiLoading, setAiLoading] = useState(false);
+    const [chartData, setChartData] = useState([]);
+    const [topProducts, setTopProducts] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -46,6 +59,19 @@ const DashboardView = () => {
                 const monthlyIncome = summary.monthly?.current?.income || 0;
                 const monthlyExpense = summary.monthly?.current?.expense || 0;
                 const criticalStockCount = summary.criticalStocks?.length || 0;
+
+                // Format Chart Data (Last 7 Days Sales)
+                if (Array.isArray(summary.sales)) {
+                    setChartData(summary.sales.map(item => ({
+                        name: new Date(item._id).toLocaleDateString('tr-TR', { weekday: 'short' }),
+                        tutar: item.total
+                    })));
+                }
+
+                // Top Products
+                if (Array.isArray(summary.topProducts)) {
+                    setTopProducts(summary.topProducts);
+                }
 
                 // Map warnings
                 const warnings = [];
@@ -156,8 +182,8 @@ const DashboardView = () => {
                         onClick={handleGetAIInsights}
                         disabled={aiLoading}
                         className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${aiLoading
-                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                                : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg hover:from-indigo-700 hover:to-purple-700 active:scale-95'
+                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                            : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg hover:from-indigo-700 hover:to-purple-700 active:scale-95'
                             }`}
                     >
                         <SparklesIcon style={{ fontSize: 18 }} />
@@ -220,15 +246,25 @@ const DashboardView = () => {
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h3 className="text-lg font-bold text-slate-800">Finansal Analiz</h3>
-                            <p className="text-sm text-slate-500">Aylık gelir ve gider dağılımı</p>
+                            <p className="text-sm text-slate-500">Son 7 gün satış grafiği</p>
                         </div>
-                        <button className="text-sm text-indigo-600 hover:text-indigo-700 font-medium bg-indigo-50 px-4 py-2 rounded-lg transition-colors">
-                            Detaylı Rapor
-                        </button>
                     </div>
-                    <div className="h-80 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 group hover:border-indigo-300 hover:bg-indigo-50/30 transition-all cursor-pointer">
-                        <AssessmentIcon style={{ fontSize: 48, opacity: 0.5 }} />
-                        <span className="mt-2 font-medium">Grafik Alanı (Recharts Entegrasyonu)</span>
+                    <div className="h-80 w-full" style={{ minHeight: 320 }}>
+                        <ResponsiveContainer width="100%" height={320}>
+                            <AreaChart data={chartData}>
+                                <defs>
+                                    <linearGradient id="colorTutar" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.8} />
+                                        <stop offset="95%" stopColor="#4f46e5" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                                <YAxis axisLine={false} tickLine={false} />
+                                <Tooltip />
+                                <Area type="monotone" dataKey="tutar" stroke="#4f46e5" fillOpacity={1} fill="url(#colorTutar)" />
+                            </AreaChart>
+                        </ResponsiveContainer>
                     </div>
                 </div>
 
@@ -271,6 +307,25 @@ const DashboardView = () => {
                     <button className="w-full mt-6 py-3 text-sm font-medium text-slate-600 bg-slate-50 rounded-xl hover:bg-slate-100 hover:text-slate-900 transition-colors">
                         Tüm Bildirimleri Gör
                     </button>
+                </div>
+            </div>
+
+
+            {/* Top Products Chart (New Row) */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                    <h3 className="text-lg font-bold text-slate-800 mb-6">En Çok Satan Ürünler</h3>
+                    <div className="h-64 w-full" style={{ minHeight: 240 }}>
+                        <ResponsiveContainer width="100%" height={240}>
+                            <BarChart data={topProducts} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                                <XAxis type="number" hide />
+                                <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12 }} />
+                                <Tooltip />
+                                <Bar dataKey="totalSold" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
             </div>
 
@@ -319,7 +374,7 @@ const DashboardView = () => {
                     </button>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

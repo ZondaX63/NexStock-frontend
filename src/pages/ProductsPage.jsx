@@ -5,10 +5,13 @@ import {
     Edit,
     Delete,
     FilterList,
-    AutoAwesome as SparklesIcon
+    AutoAwesome as SparklesIcon,
+    FileDownload,
+    FileUpload
 } from '@mui/icons-material';
 import api from '../api';
 import ProductFormModal from '../components/ProductFormModal';
+import ExcelImportModal from '../components/ExcelImportModal';
 
 const ProductsPage = () => {
     const [products, setProducts] = useState([]);
@@ -17,6 +20,7 @@ const ProductsPage = () => {
     const [semanticLoading, setSemanticLoading] = useState(false);
     const [aiSuggestions, setAiSuggestions] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
@@ -102,6 +106,22 @@ const ProductsPage = () => {
         }
     };
 
+    const handleExport = async () => {
+        try {
+            const response = await api.get('/products/export', { responseType: 'blob' });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'products.xlsx');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            console.error('Export error:', error);
+            alert('Dışa aktarma başarısız oldu.');
+        }
+    };
+
     const filteredProducts = products.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -115,13 +135,36 @@ const ProductsPage = () => {
                     <h2 className="text-2xl font-bold text-slate-800">Ürün Yönetimi</h2>
                     <p className="text-slate-500 mt-1">Stoktaki tüm ürünlerinizi buradan yönetebilirsiniz.</p>
                 </div>
-                <button
-                    onClick={() => { setSelectedProduct(null); setIsModalOpen(true); }}
-                    className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm shadow-indigo-500/30"
-                >
-                    <Add className="mr-2 h-5 w-5" />
-                    Yeni Ürün Ekle
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setIsImportModalOpen(true)}
+                        className="inline-flex items-center px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm"
+                    >
+                        <FileUpload className="mr-2 h-5 w-5 text-slate-500" />
+                        İçe Aktar
+                    </button>
+                    <button
+                        onClick={handleExport}
+                        className="inline-flex items-center px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm"
+                    >
+                        <FileDownload className="mr-2 h-5 w-5 text-slate-500" />
+                        Dışa Aktar
+                    </button>
+                    <button
+                        onClick={() => window.open('/panel/print-labels', '_blank')}
+                        className="inline-flex items-center px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg transition-colors shadow-sm"
+                    >
+                        <div className="mr-2 h-5 w-5 text-slate-500">🏷️</div>
+                        Barkod Yazdır
+                    </button>
+                    <button
+                        onClick={() => { setSelectedProduct(null); setIsModalOpen(true); }}
+                        className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm shadow-indigo-500/30"
+                    >
+                        <Add className="mr-2 h-5 w-5" />
+                        Yeni Ürün Ekle
+                    </button>
+                </div>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
@@ -263,6 +306,16 @@ const ProductsPage = () => {
                 product={selectedProduct}
                 categories={categories}
                 brands={brands}
+            />
+
+            <ExcelImportModal
+                isOpen={isImportModalOpen}
+                onClose={() => setIsImportModalOpen(false)}
+                onSuccess={() => {
+                    fetchProducts();
+                    // Optional: keep modal open to show results or close it
+                    // For now we keep it open so user sees stats, but refresh happens in background
+                }}
             />
 
             {/* AI Prediction Modal */}
