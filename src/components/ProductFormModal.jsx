@@ -19,7 +19,8 @@ const ProductFormModal = ({ isOpen, onClose, onSave, product, categories = [], b
         trackStock: true,
         currency: 'TRY',
         priceUSD: '',
-        priceEUR: ''
+        priceEUR: '',
+        oem: ''
     });
     const [aiLoading, setAiLoading] = useState(false);
 
@@ -51,7 +52,8 @@ const ProductFormModal = ({ isOpen, onClose, onSave, product, categories = [], b
                 trackStock: product.trackStock !== false,
                 currency: product.currency || 'TRY',
                 priceUSD: product.priceUSD || '',
-                priceEUR: product.priceEUR || ''
+                priceEUR: product.priceEUR || '',
+                oem: product.oem || ''
             });
         } else {
             setFormData({
@@ -70,7 +72,8 @@ const ProductFormModal = ({ isOpen, onClose, onSave, product, categories = [], b
                 trackStock: true,
                 currency: 'TRY',
                 priceUSD: '',
-                priceEUR: ''
+                priceEUR: '',
+                oem: ''
             });
 
             if (isOpen) {
@@ -226,6 +229,28 @@ const ProductFormModal = ({ isOpen, onClose, onSave, product, categories = [], b
                                             <option key={brand._id} value={brand._id}>{brand.name}</option>
                                         ))}
                                     </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700">OEM No</label>
+                                    <input
+                                        type="text"
+                                        name="oem"
+                                        value={formData.oem}
+                                        onChange={handleChange}
+                                        className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700">Raf No</label>
+                                    <input
+                                        type="text"
+                                        name="shelfLocation"
+                                        value={formData.shelfLocation}
+                                        onChange={handleChange}
+                                        className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    />
                                 </div>
 
                                 <div>

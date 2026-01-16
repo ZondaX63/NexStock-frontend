@@ -29,7 +29,7 @@ const ProductsPage = () => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const res = await api.get('/products');
+            const res = await api.get('/products?limit=0');
             setProducts(res.data.products || res.data || []);
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -125,7 +125,9 @@ const ProductsPage = () => {
     const filteredProducts = products.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.barcode?.toLowerCase().includes(searchTerm.toLowerCase())
+        product.barcode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.oem?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.brand?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -221,7 +223,11 @@ const ProductsPage = () => {
                         <thead className="bg-slate-50">
                             <tr>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Ürün Adı</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">SKU / Barkod</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Marka</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Stok Kodu</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Barkod</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">OEM No</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Raf No</th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Kategori</th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Stok</th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Fiyat</th>
@@ -254,8 +260,19 @@ const ProductsPage = () => {
                                             <div className="text-sm text-slate-500 truncate max-w-xs">{product.description}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-slate-900">{product.brand?.name || '-'}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-slate-900">{product.sku}</div>
-                                            <div className="text-xs text-slate-500">{product.barcode}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-slate-900">{product.barcode || '-'}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-slate-900">{product.oem || '-'}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-slate-900">{product.shelfLocation || '-'}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
