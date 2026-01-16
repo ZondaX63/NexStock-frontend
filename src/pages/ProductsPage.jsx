@@ -126,7 +126,7 @@ const ProductsPage = () => {
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.barcode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.oem?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (Array.isArray(product.oem) ? product.oem.some(o => o.toLowerCase().includes(searchTerm.toLowerCase())) : product.oem?.toLowerCase().includes(searchTerm.toLowerCase())) ||
         product.brand?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -269,7 +269,9 @@ const ProductsPage = () => {
                                             <div className="text-sm text-slate-900">{product.barcode || '-'}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-slate-900">{product.oem || '-'}</div>
+                                            <div className="text-sm text-slate-900 truncate max-w-[150px]" title={Array.isArray(product.oem) ? product.oem.join(', ') : (product.oem || '-')}>
+                                                {Array.isArray(product.oem) ? product.oem.join(', ') : (product.oem || '-')}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-slate-900">{product.shelfLocation || '-'}</div>
@@ -285,7 +287,20 @@ const ProductsPage = () => {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                                            {product.salePrice?.toLocaleString('tr-TR', { style: 'currency', currency: product.currency || 'TRY' })}
+                                            <div className="font-medium text-slate-900">
+                                                {product.salePrice?.toLocaleString('tr-TR', {
+                                                    style: 'currency',
+                                                    currency: product.saleCurrency || product.currency || 'TRY'
+                                                })}
+                                            </div>
+                                            {(product.saleCurrency || product.currency) !== 'TRY' && product.salePriceTRY && (
+                                                <div className="text-[10px] text-emerald-600 font-bold mt-1">
+                                                    ≈ {product.salePriceTRY.toLocaleString('tr-TR', {
+                                                        style: 'currency',
+                                                        currency: 'TRY'
+                                                    })}
+                                                </div>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <button

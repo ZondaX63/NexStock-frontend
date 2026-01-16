@@ -5,6 +5,7 @@ import {
     Search
 } from '@mui/icons-material';
 import { AppContext } from '../contexts/AppContext';
+import CurrencyTicker from './CurrencyTicker';
 
 const Topbar = ({ toggleSidebar }) => {
     const { notifications } = useContext(AppContext);
@@ -31,6 +32,9 @@ const Topbar = ({ toggleSidebar }) => {
                 </div>
             </div>
             <div className="flex items-center space-x-6">
+                <div className="hidden lg:block">
+                    <CurrencyTicker />
+                </div>
                 <div className="relative">
                     <button
                         onClick={() => setShowNotifications(!showNotifications)}
