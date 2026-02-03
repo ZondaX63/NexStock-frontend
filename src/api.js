@@ -23,8 +23,30 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   response => response,
   error => {
-    const message = error.response?.data?.message || error.response?.data?.msg || 'An unexpected error occurred';
-    console.error('API Error:', message);
+    const status = error.response?.status;
+    const data = error.response?.data || {};
+    const message = data.message || data.msg || 'An unexpected error occurred';
+    console.error('API Error:', message, 'status:', status);
+
+    // Handle unauthorized / expired token centrally
+    if (status === 401) {
+      try {
+        localStorage.removeItem('token');
+      } catch (e) {
+        // ignore
+      }
+      // Avoid redirect loop if already on login
+      if (window.location.pathname !== '/login') {
+        // Optional: show a brief message then redirect
+        try {
+          // Use replace to avoid keeping the protected page in history
+          window.location.replace('/login');
+        } catch (e) {
+          window.location.href = '/login';
+        }
+      }
+    }
+
     return Promise.reject(error);
   }
 );

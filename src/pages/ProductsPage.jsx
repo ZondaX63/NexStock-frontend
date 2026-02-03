@@ -66,8 +66,10 @@ const ProductsPage = () => {
             setIsModalOpen(false);
             fetchProducts();
         } catch (error) {
-            console.error('Error saving product:', error);
-            alert('Ürün kaydedilirken bir hata oluştu.');
+            const errMsg = error.response?.data?.message || error.response?.data?.msg || error.message || 'Ürün kaydedilirken bir hata oluştu.';
+            console.error('Error saving product:', errMsg, error);
+            // Show server-provided message when available to help debugging
+            alert(errMsg);
         }
     };
 
