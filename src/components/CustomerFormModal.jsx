@@ -170,10 +170,9 @@ const CustomerFormModal = ({ isOpen, onClose, onSave, customer }) => {
                                     value={formData.openingBalance || ''}
                                     onChange={handleChange}
                                     placeholder="0.00"
-                                    disabled={!!customer} 
-                                    className={`mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${customer ? 'bg-gray-100 text-gray-500' : ''}`}
+                                    className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                 />
-                                {customer && <p className="text-xs text-slate-500 mt-1">Bakiye sadece işlem eklenerek güncellenmelidir.</p>}
+                                {customer && <p className="text-xs text-amber-600 mt-1">⚠️ Bakiye değişikliği işlem kaydı oluşturur.</p>}
                             </div>
 
                             <div className="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse -mx-6 -mb-4 mt-6">

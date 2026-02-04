@@ -71,6 +71,24 @@ export const AppProvider = ({ children }) => {
     }
   }, []);
 
+  const markNotificationRead = useCallback(async (id) => {
+    try {
+      await api.put(`/notifications/${id}`);
+      setNotifications(prev => prev.map(n => n._id === id ? { ...n, read: true } : n));
+    } catch (err) {
+      console.error('Failed to mark notification read:', err);
+    }
+  }, []);
+
+  const markAllNotificationsRead = useCallback(async () => {
+    try {
+      await api.post('/notifications/mark-all-read');
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    } catch (err) {
+      console.error('Failed to mark all notifications read:', err);
+    }
+  }, []);
+
   // Global refresh fonksiyonu - belirli veri türlerini yeniden yüklenmesini tetikler
   const triggerRefresh = useCallback((dataTypes) => {
     const types = Array.isArray(dataTypes) ? dataTypes : [dataTypes];
@@ -113,6 +131,9 @@ export const AppProvider = ({ children }) => {
       notifications,
       setUser,
       setNotifications,
+
+      markNotificationRead,
+      markAllNotificationsRead,
 
       refreshTriggers,
       triggerRefresh,

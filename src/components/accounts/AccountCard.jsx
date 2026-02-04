@@ -23,7 +23,22 @@ const AccountCard = ({ account, onEdit, onDelete, onDetail, onTransfer }) => {
         return labels[type] || type;
     };
 
-    const balanceColor = account.balance >= 0 ? 'text-emerald-600' : 'text-red-600';
+    // Alacak/Verecek mantığına göre renk belirleme
+    const getBalanceColor = () => {
+        if (account.type === 'cari') {
+            if (account.cariType === 'customer') {
+                // Müşteri: pozitif = alacak (yeşil), negatif = verecek (kırmızı)
+                return account.balance >= 0 ? 'text-emerald-600' : 'text-red-600';
+            } else if (account.cariType === 'supplier') {
+                // Tedarikçi: pozitif = borç/verecek (kırmızı), negatif = alacak (yeşil)
+                return account.balance >= 0 ? 'text-red-600' : 'text-emerald-600';
+            }
+        }
+        // Şirket hesapları: pozitif = varlık (yeşil), negatif = eksik (kırmızı)
+        return account.balance >= 0 ? 'text-emerald-600' : 'text-red-600';
+    };
+
+    const balanceColor = getBalanceColor();
 
     return (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow">

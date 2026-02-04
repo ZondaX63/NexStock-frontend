@@ -4,6 +4,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Reduce base font-size to make overall typography slightly smaller */
+html { font-size: 14px; }
+
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
@@ -16,4 +19,92 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Dark mode visual fixes: provide sensible fallbacks for utility classes
+   that were authored primarily for light mode. These overrides are
+   intentionally conservative and target the most-common utility
+   classes used across the app (text, background, borders, divides).
+   Use with care — prefer adding `dark:` variants on specific elements
+   when more fine-grained control is needed. */
+
+.dark body {
+  background-color: #0f1724; /* slate-900 */
+  color: #e2e8f0; /* slate-200 */
+}
+
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-slate-700 {
+  color: #e2e8f0 !important; /* readable light text */
+}
+
+.dark .text-slate-500,
+.dark .text-gray-500 {
+  color: #94a3b8 !important; /* muted text on dark bg */
+}
+
+.dark .bg-white,
+.dark .bg-slate-50,
+.dark .bg-slate-100,
+.dark .bg-indigo-50,
+.dark .bg-white\/50,
+.dark .bg-slate-50\/50 {
+  background-color: #0b1220 !important; /* darker card background */
+}
+
+.dark .border-slate-100,
+.dark .border-gray-100,
+.dark .divide-slate-200 {
+  border-color: #16202b !important;
+}
+
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-indigo-50:hover {
+  background-color: #08121a !important;
+}
+
+.dark .bg-slate-100 {
+  background-color: rgba(148,163,184,0.06) !important;
+}
+
+.dark .text-slate-900 .truncate,
+.dark .text-slate-900 span,
+.dark .text-slate-900 div {
+  color: #e2e8f0 !important;
+}
+
+/* Table specific tweaks */
+.dark table thead {
+  background-color: #071126 !important;
+}
+.dark table tbody tr:hover {
+  background-color: #071826 !important;
+}
+
+/* Table layout tweaks: reduce horizontal whitespace while keeping original font sizes */
+table.min-w-full th,
+table.min-w-full td {
+  /* increased horizontal padding for more breathing room */
+  padding: 0.75rem 1.25rem; /* 12px 20px (mobile/tablet) */
+}
+
+table.min-w-full thead th {
+  letter-spacing: 0.02em;
+  font-weight: 600;
+}
+
+/* Keep existing font-size utilities untouched — do not override text sizing */
+
+/* Slightly larger badges/controls inside tables to match new spacing */
+table.min-w-full .inline-flex.items-center.px-2\.5.py-0\.5.text-xs {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.85rem;
+}
+
+@media (min-width: 1024px) {
+  table.min-w-full th,
+  table.min-w-full td {
+    padding: 1.25rem 2rem; /* 20px 32px on desktop for generous spacing */
+  }
 }

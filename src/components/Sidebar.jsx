@@ -10,7 +10,8 @@ import {
     Assessment,
     ExpandMore,
     ExpandLess,
-    SupervisorAccount
+    SupervisorAccount,
+    ShoppingCart
 } from '@mui/icons-material';
 
 const Sidebar = ({ isOpen }) => {
@@ -19,7 +20,8 @@ const Sidebar = ({ isOpen }) => {
     const [expandedSections, setExpandedSections] = useState({});
 
     const menuItems = [
-        { id: 'dashboard', label: 'Dashboard', icon: <Dashboard />, path: '/panel' },
+        { id: 'dashboard', label: 'Anasayfa', icon: <Dashboard />, path: '/panel' },
+        { id: 'sales', label: 'Perakende', icon: <ShoppingCart />, path: '/panel/sales' },
         {
             id: 'stock',
             label: 'Stok Yönetimi',

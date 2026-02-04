@@ -8,6 +8,10 @@ import { CssBaseline } from '@mui/material';
 import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+// Ensure the browser tab shows the application name
+if (!document.title || !document.title.includes('NexStock')) {
+  document.title = `NexStock${document.title ? ' - ' + document.title : ''}`;
+}
 root.render(
   <React.StrictMode>
     <AppThemeProvider>

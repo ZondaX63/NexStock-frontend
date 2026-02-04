@@ -35,7 +35,14 @@ const AccountPage = () => {
         cariType: '',
         email: '',
         phone: '',
-        address: ''
+        address: '',
+        bankName: '',
+        iban: '',
+        branchCode: '',
+        accountNumber: '',
+        creditLimit: '',
+        cutoffDay: '',
+        paymentDay: ''
     });
     const [isEdit, setIsEdit] = useState(false);
     const [selectedAccount, setSelectedAccount] = useState(null);
@@ -58,13 +65,13 @@ const AccountPage = () => {
             ...c,
             type: 'cari',
             cariType: 'customer',
-            balance: c.unpaidAmount // Map unpaidAmount to balance for display
+            balance: c.balance || 0 // Use balance field directly
         })),
         ...suppliers.map(s => ({
             ...s,
             type: 'cari',
             cariType: 'supplier',
-            balance: s.unpaidAmount // Map unpaidAmount to balance for display
+            balance: s.balance || 0 // Use balance field directly
         }))
     ];
 
@@ -130,7 +137,21 @@ const AccountPage = () => {
         }
         try {
             if (isEdit) {
-                await api.put(`/accounts/${formData._id}`, formData);
+                // Determine the correct endpoint based on account type
+                if (formData.type === 'cari' && formData.cariType === 'customer') {
+                    // Map balance to openingBalance for customer/supplier endpoints
+                    const customerData = { ...formData, openingBalance: formData.balance };
+                    await api.put(`/customers/${formData._id}`, customerData);
+                    triggerRefresh('customers');
+                } else if (formData.type === 'cari' && formData.cariType === 'supplier') {
+                    // Map balance to openingBalance for customer/supplier endpoints
+                    const supplierData = { ...formData, openingBalance: formData.balance };
+                    await api.put(`/suppliers/${formData._id}`, supplierData);
+                    triggerRefresh('suppliers');
+                } else {
+                    await api.put(`/accounts/${formData._id}`, formData);
+                    triggerRefresh('accounts');
+                }
             } else {
                 await api.post('/accounts', formData);
 
@@ -142,10 +163,10 @@ const AccountPage = () => {
                         triggerRefresh('suppliers');
                     }
                 }
+                triggerRefresh('accounts');
             }
             setFormOpen(false);
             refreshBalances();
-            triggerRefresh('accounts');
         } catch (error) {
             console.error('Error saving account:', error);
             alert('Hesap kaydedilemedi');
@@ -156,20 +177,21 @@ const AccountPage = () => {
         try {
             const accountToDelete = selectedAccount;
             setUndoAccount(accountToDelete);
-            await api.delete(`/accounts/${accountToDelete._id}`);
-            setDeleteOpen(false);
+            
+            // Determine the correct endpoint based on account type
+            if (accountToDelete.type === 'cari' && accountToDelete.cariType === 'customer') {
+                await api.delete(`/customers/${accountToDelete._id}`);
+                triggerRefresh('customers');
+            } else if (accountToDelete.type === 'cari' && accountToDelete.cariType === 'supplier') {
+                await api.delete(`/suppliers/${accountToDelete._id}`);
+                triggerRefresh('suppliers');
+            } else {
+                await api.delete(`/accounts/${accountToDelete._id}`);
+                triggerRefresh('accounts');
+            }
+            
             setDeleteOpen(false);
             refreshBalances();
-
-            // Refresh related pages
-            if (accountToDelete.type === 'cari') {
-                if (accountToDelete.cariType === 'customer') {
-                    triggerRefresh('customers');
-                } else if (accountToDelete.cariType === 'supplier') {
-                    triggerRefresh('suppliers');
-                }
-            }
-            triggerRefresh('accounts');
         } catch (error) {
             console.error('Error deleting account:', error);
             alert('Hesap silinemedi');
@@ -180,7 +202,6 @@ const AccountPage = () => {
         if (!acc) return;
         const { _id, ...rest } = acc;
         try {
-            await api.post('/accounts', rest);
             await api.post('/accounts', rest);
             refreshBalances();
 

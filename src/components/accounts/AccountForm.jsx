@@ -170,17 +170,16 @@ const AccountForm = ({ open, onClose, onSave, form, onChange }) => {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700">Bakiye {form._id ? '(Düzenlenemez)' : '*'}</label>
+                                    <label className="block text-sm font-medium text-slate-700">Bakiye *</label>
                                     <input
                                         type="number"
                                         name="balance"
                                         value={form.balance}
                                         onChange={onChange}
                                         placeholder="0.00"
-                                        disabled={!!form._id}
-                                        className={`mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${form._id ? 'bg-slate-100 text-slate-500' : ''}`}
+                                        className="mt-1 block w-full border border-slate-300 rounded-lg shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                     />
-                                    {form._id && <p className="mt-1 text-xs text-slate-500">Bakiye sadece işlem ekleyerek değiştirilebilir.</p>}
+                                    {form._id && <p className="mt-1 text-xs text-amber-600">⚠️ Bakiye değişikliği işlem kaydı oluşturur.</p>}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700">Para Birimi *</label>

@@ -24,6 +24,8 @@ const ProductsPage = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
+    const [filterOpen, setFilterOpen] = useState(false);
+    const [filters, setFilters] = useState({ category: '', brand: '', minStock: '', maxStock: '', inStockOnly: false });
     const [predictionModel, setPredictionModel] = useState({ open: false, text: '', loading: false });
 
     const fetchProducts = async () => {
@@ -124,13 +126,28 @@ const ProductsPage = () => {
         }
     };
 
-    const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.barcode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (Array.isArray(product.oem) ? product.oem.some(o => o.toLowerCase().includes(searchTerm.toLowerCase())) : product.oem?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        product.brand?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredProducts = products.filter(product => {
+        const q = searchTerm.trim().toLowerCase();
+        const matchesSearch = !q || (
+            product.name.toLowerCase().includes(q) ||
+            product.sku?.toLowerCase().includes(q) ||
+            product.barcode?.toLowerCase().includes(q) ||
+            (Array.isArray(product.oem) ? product.oem.some(o => o.toLowerCase().includes(q)) : (product.oem?.toLowerCase?.() || '').includes(q)) ||
+            product.brand?.name?.toLowerCase().includes(q)
+        );
+
+        if (!matchesSearch) return false;
+
+        if (filters.category && product.category?.name !== filters.category) return false;
+        if (filters.brand && product.brand?.name !== filters.brand) return false;
+
+        const qty = Number(product.quantity || 0);
+        if (filters.inStockOnly && qty <= 0) return false;
+        if (filters.minStock && qty < Number(filters.minStock)) return false;
+        if (filters.maxStock && qty > Number(filters.maxStock)) return false;
+
+        return true;
+    });
 
     return (
         <div className="space-y-6">
@@ -195,12 +212,69 @@ const ProductsPage = () => {
                             <SparklesIcon className={`mr-2 h-4 w-4 ${semanticLoading ? 'animate-spin' : ''}`} />
                             {semanticLoading ? 'Aranıyor...' : 'AI Akıllı Ara'}
                         </button>
-                        <button className="inline-flex items-center px-3 py-2 border border-slate-200 shadow-sm text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <button onClick={() => setFilterOpen(prev => !prev)} className="inline-flex items-center px-3 py-2 border border-slate-200 shadow-sm text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <FilterList className="mr-2 h-4 w-4 text-slate-500" />
                             Filtrele
                         </button>
                     </div>
                 </div>
+
+                {filterOpen && (
+                    <div className="px-4 py-4 transition-all">
+                        <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm p-4">
+                            <div className="flex items-center justify-between mb-4">
+                                <div>
+                                    <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-100">Filtreler</h4>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">Listeyi daraltmak için bir veya birkaç filtre seçin</p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => { setFilters({ category: '', brand: '', minStock: '', maxStock: '', inStockOnly: false }); }} className="text-xs px-3 py-1 rounded-md bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">Temizle</button>
+                                    <button onClick={() => setFilterOpen(false)} className="text-xs px-3 py-1 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">Uygula</button>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                                <div>
+                                    <label className="text-xs text-slate-500 dark:text-slate-300 block mb-1">Kategori</label>
+                                    <select value={filters.category} onChange={e => setFilters(prev => ({ ...prev, category: e.target.value }))} className="block w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2">
+                                        <option value=''>Tümü</option>
+                                        {categories.map(c => <option key={c._id} value={c.name}>{c.name}</option>)}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="text-xs text-slate-500 dark:text-slate-300 block mb-1">Marka</label>
+                                    <select value={filters.brand} onChange={e => setFilters(prev => ({ ...prev, brand: e.target.value }))} className="block w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2">
+                                        <option value=''>Tümü</option>
+                                        {brands.map(b => <option key={b._id} value={b.name}>{b.name}</option>)}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="text-xs text-slate-500 dark:text-slate-300 block mb-1">Min Stok</label>
+                                    <input value={filters.minStock} onChange={e => setFilters(prev => ({ ...prev, minStock: e.target.value }))} type="number" className="block w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2" />
+                                </div>
+
+                                <div>
+                                    <label className="text-xs text-slate-500 dark:text-slate-300 block mb-1">Max Stok</label>
+                                    <input value={filters.maxStock} onChange={e => setFilters(prev => ({ ...prev, maxStock: e.target.value }))} type="number" className="block w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2" />
+                                </div>
+                            </div>
+
+                            <div className="mt-4 flex items-center justify-between">
+                                <label className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                                    <input type="checkbox" checked={filters.inStockOnly} onChange={e => setFilters(prev => ({ ...prev, inStockOnly: e.target.checked }))} className="h-4 w-4" />
+                                    Sadece stokta olanlar
+                                </label>
+
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => { setFilters({ category: '', brand: '', minStock: '', maxStock: '', inStockOnly: false }); setFilterOpen(false); }} className="px-3 py-2 text-sm rounded-md bg-slate-100 dark:bg-slate-800">Temizle</button>
+                                    <button onClick={() => setFilterOpen(false)} className="px-3 py-2 text-sm rounded-md bg-indigo-600 text-white">Uygula</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {aiSuggestions.length > 0 && searchTerm && (
                     <div className="px-4 py-2 bg-purple-50 border-b border-purple-100 flex items-center gap-3 animate-in slide-in-from-top duration-300">

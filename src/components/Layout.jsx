@@ -17,13 +17,13 @@ const Layout = () => {
             />
 
             <div className="flex-1 flex flex-col overflow-hidden">
-                <Topbar toggleSidebar={toggleSidebar} />
+                    <Topbar toggleSidebar={toggleSidebar} />
 
-                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 dark:bg-slate-900 p-6 lg:p-10 transition-colors duration-200">
-                    <div className="max-w-7xl mx-auto dark:text-slate-200">
-                        <Outlet />
-                    </div>
-                </main>
+                    <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 dark:bg-slate-900 p-6 lg:p-8 transition-colors duration-200">
+                        <div className="max-w-8xl w-full mx-auto dark:text-slate-200 px-2 lg:px-6">
+                            <Outlet />
+                        </div>
+                    </main>
             </div>
 
             <NexAIAssistant />

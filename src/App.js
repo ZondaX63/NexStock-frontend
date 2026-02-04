@@ -12,7 +12,9 @@ const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const WelcomePage = lazy(() => import('./pages/WelcomePage'));
 // const DashboardPage = lazy(() => import('./pages/DashboardPage')); // Replaced by DashboardView
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const RetailSalePage = lazy(() => import('./pages/RetailSalePage'));
 const CustomersPage = lazy(() => import('./pages/CustomersPage'));
+const CustomerDetailPage = lazy(() => import('./pages/CustomerDetailPage'));
 const SuppliersPage = lazy(() => import('./pages/SuppliersPage'));
 const CariPage = lazy(() => import('./pages/CariPage'));
 const InvoicesPage = lazy(() => import('./pages/InvoicesPage'));
@@ -40,10 +42,12 @@ function App() {
                         <Route path="/panel" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
                             <Route index element={<DashboardView />} />
                             <Route path="products" element={<ProductsPage />} />
+                            <Route path="sales" element={<RetailSalePage />} />
                             <Route path="products/:productId/movements" element={<ProductMovementsPage />} />
                             <Route path="categories" element={<CategoriesPage />} />
                             <Route path="brands" element={<BrandsPage />} />
                             <Route path="customers" element={<CustomersPage />} />
+                            <Route path="customers/:id" element={<CustomerDetailPage />} />
                             <Route path="cari" element={<CariPage />} />
                             <Route path="suppliers" element={<SuppliersPage />} />
                             <Route path="invoices" element={<InvoicesPage />} />

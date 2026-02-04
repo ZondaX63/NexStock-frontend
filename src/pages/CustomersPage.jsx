@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Add,
     Search,
@@ -7,7 +8,8 @@ import {
     FilterList,
     Phone,
     Email,
-    LocationOn
+    LocationOn,
+    Visibility
 } from '@mui/icons-material';
 import api from '../api';
 import CustomerFormModal from '../components/CustomerFormModal';
@@ -15,6 +17,7 @@ import CariSummaryWidget from '../components/accounts/CariSummaryWidget';
 import { useGlobalBalances } from '../hooks/useGlobalBalances';
 
 const CustomersPage = () => {
+    const navigate = useNavigate();
     const {
         customers,
         suppliers,
@@ -218,14 +221,23 @@ const CustomersPage = () => {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <button
+                                                onClick={() => navigate(`/panel/customers/${customer._id}`)}
+                                                className="text-indigo-600 hover:text-indigo-900 mr-4"
+                                                title="Detaylar"
+                                            >
+                                                <Visibility className="h-5 w-5" />
+                                            </button>
+                                            <button
                                                 onClick={() => { setSelectedCustomer(customer); setIsModalOpen(true); }}
                                                 className="text-indigo-600 hover:text-indigo-900 mr-4"
+                                                title="Düzenle"
                                             >
                                                 <Edit className="h-5 w-5" />
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(customer._id)}
                                                 className="text-red-600 hover:text-red-900"
+                                                title="Sil"
                                             >
                                                 <Delete className="h-5 w-5" />
                                             </button>
